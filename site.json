@@ -1,0 +1,237 @@
+{
+  "meta": {
+    "title": "UI Sample · 风格示例",
+    "language": "zh-CN"
+  },
+  "header": {
+    "links": [
+      {
+        "label": "首页",
+        "href": "#home"
+      },
+      {
+        "label": "排版示例",
+        "href": "#layouts"
+      },
+      {
+        "label": "视频展示",
+        "href": "#videos"
+      },
+      {
+        "label": "致谢",
+        "href": "#thanks"
+      }
+    ],
+    "skipLabel": "跳至主要内容",
+    "skipHref": "#main",
+    "ariaLabel": "主导航",
+    "brand": "UI Sample",
+    "brandHref": "#home",
+    "brandAriaLabel": "UI Sample 首页",
+    "menu": {
+      "openLabel": "打开导航菜单",
+      "closeLabel": "关闭导航菜单"
+    }
+  },
+  "sections": {
+    "hero": {
+      "eyebrow": "01 / 首页",
+      "title": [
+        "一个标题占位符。",
+        "一段视觉的开场。"
+      ],
+      "description": [
+        "这里是一段简介占位文字。用两到三行描述，",
+        "为即将展开的内容留出一个简单、清晰的入口。"
+      ],
+      "action": {
+        "label": "浏览视频",
+        "href": "#videos"
+      },
+      "caption": "封面 / 图片占位符",
+      "image": {
+        "src": "assets/temp/外国人.jpg",
+        "alt": "",
+        "placeholder": "封面图片占位符"
+      }
+    },
+    "intro": {
+      "index": "01",
+      "title": [
+        "留一点空间，",
+        "给文字和影像。"
+      ],
+      "description": "正文占位符。这里可以放置网站简介、项目描述或创作说明。这段文字只用于展示正文的字号、行距与阅读宽度，实际内容将在后续替换。fjdkslangoxngfjdksnangkdsmgnd",
+      "action": {
+        "label": "查看排版示例",
+        "href": "#layouts"
+      },
+      "image": {
+        "src": "assets/temp/公交车.jpg",
+        "alt": "",
+        "placeholder": "占位图片"
+      },
+      "backgroundImage": {
+        "src": "assets/temp/一堆自行车.jpg",
+        "alt": ""
+      },
+      "maskImage": {
+        "src": "assets/images/intro-mask.png"
+      }
+    },
+    "layouts": {
+      "eyebrow": "02 / 不同排版",
+      "title": "让画面有自己的位置。",
+      "backgroundImage": {
+        "src": "",
+        "alt": ""
+      },
+      "mainCard": {
+        "videoId": "04",
+        "image": {
+          "src": "assets/temp/卖菜.jpg",
+          "alt": "",
+          "placeholder": "图片 04"
+        },
+        "number": "04",
+        "duration": "--:--",
+        "title": "主视频标题占位符",
+        "caption": "视频 04",
+        "openLabel": "打开视频 04 占位预览",
+        "preview": {
+          "title": "视频 04 · 占位预览",
+          "label": "视频 04"
+        }
+      },
+      "copy": {
+        "eyebrow": "图文双列",
+        "title": [
+          "一个更完整的",
+          "标题占位符。"
+        ],
+        "description": "正文占位符。这一列用于展示稍长的内容描述，与左侧的大画面共同形成阅读重点。留白使信息保持清晰，也为按钮提供自然的位置。",
+        "action": {
+          "label": "打开视频"
+        }
+      },
+      "sideCard": {
+        "videoId": "05",
+        "image": {
+          "src": "assets/temp/广场.jpg",
+          "alt": "",
+          "placeholder": "图片 05"
+        },
+        "title": "视频标题占位符",
+        "eyebrow": "紧凑横排 / 视频 05",
+        "description": "简短描述占位符。",
+        "openLabel": "打开视频 05 占位预览",
+        "preview": {
+          "title": "视频 05 · 占位预览",
+          "label": "视频 05"
+        }
+      }
+    },
+    "videos": {
+      "eyebrow": "03 / 横向展示",
+      "title": "影像，依次展开。",
+      "controls": {
+        "previousLabel": "向左滚动视频卡片",
+        "nextLabel": "向右滚动视频卡片",
+        "listLabel": "视频卡片列表，可左右滚动"
+      },
+      "cards": [
+        {
+          "videoId": "01",
+          "image": {
+            "src": "assets/temp/为人民服务.jpg",
+            "alt": "",
+            "placeholder": "图片 01"
+          },
+          "number": "01",
+          "duration": "--:--",
+          "title": "视频标题占位符",
+          "caption": "视频 01",
+          "description": "一行视频描述占位文字。",
+          "openLabel": "打开视频 01 占位预览",
+          "preview": {
+            "title": "视频 01 · 占位预览",
+            "label": "视频 01"
+          }
+        },
+        {
+          "videoId": "02",
+          "image": {
+            "src": "assets/temp/长城.jpg",
+            "alt": "",
+            "placeholder": "图片 02"
+          },
+          "number": "02",
+          "duration": "--:--",
+          "title": "视频标题占位符",
+          "caption": "视频 02",
+          "description": "一行视频描述占位文字。",
+          "openLabel": "打开视频 02 占位预览",
+          "preview": {
+            "title": "视频 02 · 占位预览",
+            "label": "视频 02"
+          }
+        },
+        {
+          "videoId": "03",
+          "image": {
+            "src": "assets/temp/两个人.jpg",
+            "alt": "",
+            "placeholder": "图片 03"
+          },
+          "number": "03",
+          "duration": "--:--",
+          "title": "视频标题占位符",
+          "caption": "视频 03",
+          "description": "一行视频描述占位文字。",
+          "openLabel": "打开视频 03 占位预览",
+          "preview": {
+            "title": "视频 03 · 占位预览",
+            "label": "视频 03"
+          }
+        }
+      ]
+    },
+    "thanks": {
+      "names": [
+        "占位符A",
+        "占位符B",
+        "占位符C",
+        "占位符D",
+        "占位符E",
+        "占位符F",
+        "占位符G",
+        "占位符H",
+        "占位符I",
+        "占位符J",
+        "占位符K",
+        "占位符L"
+      ],
+      "eyebrow": "04 / 致谢",
+      "title": "谢谢，每一份参与。",
+      "action": {
+        "label": "回到首页",
+        "href": "#home"
+      },
+      "ariaLabel": "致谢名单占位符"
+    }
+  },
+  "footer": {
+    "brand": "UI Sample",
+    "description": "风格示例 · 所有文字与媒体均为占位内容",
+    "topLabel": "返回顶部 ↑",
+    "brandHref": "#home",
+    "topHref": "#home"
+  },
+  "videoDialog": {
+    "initialTitle": "视频占位预览",
+    "initialLabel": "视频 01",
+    "placeholder": "视频占位符 · 尚未添加媒体",
+    "description": "这里展示视频打开后的预览样式，后续可替换为实际视频。",
+    "closeLabel": "关闭视频预览"
+  }
+}
