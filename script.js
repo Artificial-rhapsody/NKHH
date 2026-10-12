@@ -1,4 +1,7 @@
 (() => {
+  let currentSite, controller, observer;
+  const roots = [...document.querySelectorAll('title, .skip, .site-header, main, .site-footer, #video-dialog')];
+  const originals = roots.map(node => node.innerHTML);
   const get = (data, path) => path.split('.').reduce((value, key) => value[key], data);
   function safeUrl(source) {
     if (!source) return '';
@@ -60,7 +63,33 @@
   async function initialize() {
     const response = await fetch('site.json', { cache: 'no-store' });
     if (!response.ok) throw new Error(`site.json: HTTP ${response.status}`);
-    const site = await response.json();
+    render(await response.json());
+  }
+  function render(site) {
+    currentSite = structuredClone(site);
+    controller?.abort(); observer?.disconnect();
+    controller = new AbortController();
+    const on = (node, event, handler, options = {}) => node.addEventListener(event, handler, {...options, signal: controller.signal});
+    roots.forEach((node, index) => node.innerHTML = originals[index]);
+    const thanks = document.querySelector('.credits');
+    const credits = [...thanks.children];
+    thanks.replaceChildren(...site.sections.thanks.names.map((name, index) => {
+      const node = credits[index % credits.length].cloneNode(true);
+      node.dataset.siteText = 'sections.thanks.names.' + index;
+      if (index >= credits.length) {
+        node.style.setProperty('--x', (10 + (index % 5) * 18) + '%');
+        node.style.setProperty('--y', (12 + Math.floor(index / 5) * 15) + '%');
+      }
+      return node;
+    }));
+    const links = document.querySelector('.nav-links');
+    const linkNodes = [...links.children];
+    links.replaceChildren(...site.header.links.map((link, index) => {
+      const node = linkNodes[Math.min(index, 3)].cloneNode(true);
+      node.dataset.siteText = 'header.links.' + index + '.label';
+      node.dataset.siteAttrs = JSON.stringify({href: 'header.links.' + index + '.href'});
+      return node;
+    }));
     renderContent(site);
     const rail = document.querySelector('.rail');
     const previous = document.querySelector('#previous');
@@ -87,44 +116,46 @@
       const gap = parseFloat(getComputedStyle(rail).gap) || 24;
       rail.scrollBy({ left: direction * (card.offsetWidth + gap), behavior: behavior() });
     }
-    previous.addEventListener('click', () => moveRail(-1));
-    next.addEventListener('click', () => moveRail(1));
-    rail.addEventListener('scroll', updateRail, { passive: true });
-    rail.addEventListener('keydown', event => {
+    on(previous, 'click', () => moveRail(-1));
+    on(next, 'click', () => moveRail(1));
+    on(rail, 'scroll', updateRail, { passive: true });
+    on(rail, 'keydown', event => {
       if (event.target !== rail || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
       event.preventDefault(); moveRail(event.key === 'ArrowRight' ? 1 : -1);
     });
-    new ResizeObserver(updateRail).observe(rail);
+    observer = new ResizeObserver(updateRail); observer.observe(rail);
     updateRail();
     const menuToggle = document.querySelector('.menu-toggle');
     const navLinks = document.querySelector('.nav-links');
     function closeMenu() { navLinks.classList.remove('open'); menuToggle.setAttribute('aria-expanded', 'false'); menuToggle.setAttribute('aria-label', site.header.menu.openLabel); }
-    menuToggle.addEventListener('click', () => {
+    on(menuToggle, 'click', () => {
       const open = navLinks.classList.toggle('open');
       menuToggle.setAttribute('aria-expanded', String(open));
       menuToggle.setAttribute('aria-label', open ? site.header.menu.closeLabel : site.header.menu.openLabel);
     });
-    navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
-    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMenu(); });
-    matchMedia('(min-width:769px)').addEventListener('change', event => { if (event.matches) closeMenu(); });
+    navLinks.querySelectorAll('a').forEach(link => on(link, 'click', closeMenu));
+    on(document, 'keydown', event => { if (event.key === 'Escape') closeMenu(); });
+    on(matchMedia('(min-width:769px)'), 'change', event => { if (event.matches) closeMenu(); });
     const dialog = document.querySelector('#video-dialog');
     let opener;
-    document.querySelectorAll('[data-video]').forEach(button => button.addEventListener('click', () => {
+    document.querySelectorAll('[data-video]').forEach(button => on(button, 'click', () => {
       opener = button;
       const card = get(site, button.dataset.siteCard);
       document.querySelector('#dialog-title').textContent = card.preview.title;
       document.querySelector('#preview-label').textContent = card.preview.label;
       dialog.showModal(); document.body.classList.add('modal-open');
     }));
-    document.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
-    dialog.addEventListener('click', event => {
+    on(document.querySelector('.dialog-close'), 'click', () => dialog.close());
+    on(dialog, 'click', event => {
       if (event.target !== dialog) return;
       const rect = dialog.getBoundingClientRect();
       if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
     });
-    dialog.addEventListener('close', () => { document.body.classList.remove('modal-open'); if (opener) opener.focus({ preventScroll: true }); });
+    on(dialog, 'close', () => { document.body.classList.remove('modal-open'); if (opener) opener.focus({ preventScroll: true }); });
     document.documentElement.dataset.siteReady = 'true';
+    document.dispatchEvent(new CustomEvent('site:ready'));
   }
+  window.SitePage = {getSite: () => structuredClone(currentSite), render};
   initialize().catch(error => {
     document.documentElement.dataset.siteReady = 'error';
     console.error('Unable to load site content. Serve this directory over HTTP.', error);

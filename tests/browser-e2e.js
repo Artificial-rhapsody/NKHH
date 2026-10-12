@@ -1,0 +1,40 @@
+import { chromium } from 'playwright';
+import { randomUUID } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
+import assert from 'node:assert/strict';
+const base='http://127.0.0.1:8000',suffix=Date.now(),email=`e2e${suffix}@example.invalid`,username=`e2e${suffix}`,password=randomUUID()+'aZ1';
+const api=async(path,data,token)=>{const r=await fetch(base+path,{method:data?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:data?JSON.stringify(data):undefined});return {status:r.status,data:await r.json()};};
+const before=await (await fetch(base+'/__local/content')).json();
+const browser=await chromium.launch({headless:true,executablePath:chromium.executablePath()});const page=await browser.newPage({viewport:{width:1440,height:1000}});const errors=[];page.on('pageerror',e=>errors.push(e.message));let adminToken;
+try{
+ await page.goto(base);await page.waitForFunction(()=>document.documentElement.dataset.siteReady==='true');
+ await page.locator('.nav-links a[href="#login"]').click();await page.locator('[data-mode="register"]').click();
+ await page.locator('#auth-register [name="username"]').fill(username);await page.locator('#auth-register [name="email"]').fill(email);await page.locator('#auth-register [name="password"]').fill(password);await page.locator('[name="confirmPassword"]').fill(password);await page.locator('#auth-register .auth-submit').click();
+ await page.waitForFunction(()=>document.querySelector('#auth-message').textContent.includes('注册成功'));console.log('PASS browser registration');
+ await page.locator('#auth-login [name="password"]').fill(password);await page.locator('#auth-login .auth-submit').click();await page.waitForFunction(()=>!document.querySelector('#auth-dialog').open);
+ const userSession=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('story.session')));assert.equal(userSession.user.role,'user');assert.equal((await api('/api/admin/check',null,userSession.token)).status,403);console.log('PASS regular user cannot publish');
+ assert.equal((await api('/api/auth/register',{username:'role'+suffix,email:'role'+email,password,role:'admin'})).status,400);
+ assert.equal((await api('/api/auth/login',{identifier:email,password:'wrongpassword1'})).status,401);
+ assert.equal((await api('/api/auth/register',{username,email,password})).status,409);
+ assert.equal((await fetch('http://127.0.0.1:8787/api/auth/me',{headers:{Origin:'https://evil.example'}})).status,403);
+ const unauth=await fetch(base+'/__local/publish',{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:JSON.stringify({site:before.site,revision:before.revision})});assert.equal(unauth.status,401);
+ const promoted=spawnSync(process.execPath,['workers/promote-admin.js',email],{encoding:'utf8'});assert.equal(promoted.status,0,promoted.stderr);console.log('PASS explicit local admin promotion');
+ await page.reload();await page.waitForFunction(()=>document.documentElement.dataset.siteReady==='true');await page.locator('.nav-links a[href="#login"]').click();await page.locator('#auth-logout').click();await page.waitForFunction(()=>!sessionStorage.getItem('story.session'));await page.locator('.nav-links a[href="#login"]').click();await page.locator('#auth-login [name="identifier"]').fill(email);await page.locator('#auth-login [name="password"]').fill(password);await page.locator('#auth-login .auth-submit').click();await page.waitForURL('**/admin.html');await page.waitForSelector('#admin-workspace:not([hidden])');console.log('PASS admin automatic redirect');
+ adminToken=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('story.session')).token);
+ const frame=page.frameLocator('#preview');await frame.locator('#hero-title').click();await page.waitForSelector('#selected-fields [data-path="sections.hero.title.0"]');
+ const counts=await page.evaluate(()=>{const paths=[];function walk(v,p){if(typeof v==='string'){paths.push(p);return;}Object.entries(v).forEach(([k,x])=>walk(x,p?p+'.'+k:k));}walk(document.querySelector('#preview').contentWindow.SitePage.getSite(),'');return {leaves:paths.length,missing:paths.filter(p=>![...document.querySelectorAll('#all-fields [data-path]')].some(n=>n.dataset.path===p))};});assert.deepEqual(counts.missing,[]);console.log('PASS all '+counts.leaves+' site.json leaf fields have semantic controls');
+ await page.locator('#selected-fields [data-path="sections.hero.title.0"]').fill('浏览器验收临时标题');await page.waitForFunction(()=>document.querySelector('#preview').contentDocument.querySelector('h1').textContent.includes('浏览器验收临时标题'));
+ assert.deepEqual((await (await fetch(base+'/__local/content')).json()).site,before.site);console.log('PASS point-select and live draft preview without public write');
+ page.on('dialog',d=>d.accept());await page.locator('#publish').click();await page.waitForFunction(()=>document.querySelector('#publish-message').textContent.includes('发布成功'));const saved=await (await fetch(base+'/__local/content')).json();assert.equal(saved.site.sections.hero.title[0],'浏览器验收临时标题');console.log('PASS confirm publish and disk readback');
+ const conflict=await fetch(base+'/__local/publish',{method:'POST',headers:{Origin:base,'Content-Type':'application/json',Authorization:'Bearer '+adminToken},body:JSON.stringify({site:before.site,revision:before.revision})});assert.equal(conflict.status,409);console.log('PASS stale revision conflict');
+ await page.locator('[data-tab="upload"]').click();assert.equal(await page.locator('#upload-panel').isVisible(),true);
+ const publicPage=await browser.newPage();await publicPage.goto(base);await publicPage.waitForFunction(()=>document.documentElement.dataset.siteReady==='true');assert.ok((await publicPage.locator('h1').textContent()).includes('浏览器验收临时标题'));await publicPage.close();
+ assert.deepEqual(errors,[]);console.log('PASS public homepage reads published content; zero browser page errors');
+ await page.locator('[data-tab="edit"]').click();await page.evaluate(()=>document.querySelectorAll('aside details').forEach(n=>n.open=true));await page.getByRole('button',{name:'添加 视频卡片',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#preview').contentDocument.querySelectorAll('.rail-card').length===4);await page.locator('#reset-draft').click();await page.waitForFunction(()=>document.querySelector('#preview').contentDocument.querySelectorAll('.rail-card').length===3);console.log('PASS array addition and draft reset');
+ await page.locator('#viewport').selectOption('390px');assert.equal(await page.locator('#preview').evaluate(n=>n.style.width),'390px');console.log('PASS mobile preview switch');
+ await page.locator('#preview-dialog').click();await page.waitForFunction(()=>document.querySelector('#preview').contentDocument.querySelector('#video-dialog').open);await page.locator('#selected-fields [data-path="videoDialog.initialTitle"]').fill('弹窗草稿标题');await page.waitForFunction(()=>document.querySelector('#preview').contentDocument.querySelector('#dialog-title').textContent==='弹窗草稿标题');console.log('PASS video dialog live preview');
+}finally{
+ if(adminToken){const now=await (await fetch(base+'/__local/content')).json();const restored=await fetch(base+'/__local/publish',{method:'POST',headers:{Origin:base,'Content-Type':'application/json',Authorization:'Bearer '+adminToken},body:JSON.stringify({site:before.site,revision:now.revision})});assert.equal(restored.status,200);assert.deepEqual((await (await fetch(base+'/__local/content')).json()).site,before.site);console.log('PASS source content restored through authenticated publish');}
+ await browser.close();
+ const cleanup=spawnSync(process.execPath,['node_modules/wrangler/bin/wrangler.js','d1','execute','story-users','--local','--config','workers/wrangler.jsonc','--command',`DELETE FROM sessions WHERE user_id IN (SELECT id FROM users WHERE email='${email}'); DELETE FROM users WHERE email='${email}';`],{encoding:'utf8'});assert.equal(cleanup.status,0);console.log('PASS disposable test account removed');
+}

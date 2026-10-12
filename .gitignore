@@ -1,0 +1,11 @@
+node_modules/
+.wrangler/
+workers/.wrangler/
+.dev.vars
+.dev.vars.*
+workers/.dev.vars
+.env
+.env.*
+test-results/
+playwright-report/
+*.tmp

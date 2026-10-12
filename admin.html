@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>管理员控制界面</title><link rel="stylesheet" href="auth.css"><link rel="stylesheet" href="admin.css"></head>
+<body><header class="admin-header"><div><strong>管理员控制界面</strong><span id="admin-user"></span></div><nav><a href="index.html">查看主页</a><button id="admin-logout">退出登录</button></nav></header>
+<main><p id="access-status" role="status">正在验证管理员权限…</p><section id="admin-workspace" hidden>
+<nav class="admin-tabs"><button data-tab="edit" aria-selected="true">界面修改</button><button data-tab="upload" aria-selected="false">上传视频</button></nav>
+<div id="edit-panel"><div class="editor-toolbar"><p>点选预览中的外框元素编辑。修改仅为草稿，底部确认后才覆盖主页。</p><button id="preview-dialog">预览视频弹窗</button><button id="reset-draft">撤销全部修改</button><select id="viewport" aria-label="预览尺寸"><option value="100%">桌面预览</option><option value="390px">手机预览</option></select></div>
+<div class="editor-layout"><div class="preview-area"><iframe id="preview" title="主页可视化编辑预览" src="index.html?editor=1"></iframe></div><aside><h2 id="selection-title">选中元素</h2><div id="selected-fields"><p>点击左侧预览中的文字、图片或按钮。</p></div><details><summary>全部内容与隐藏属性</summary><p class="hint">包括页面标题、替代文字、按钮链接、弹窗文案及列表数量；不是 JSON 编辑器。</p><div id="all-fields"></div></details></aside></div>
+<footer class="publish-bar"><span id="draft-status">没有未发布修改</span><button id="publish" disabled>总确认 · 发布主页</button><p id="publish-message" role="status" aria-live="polite"></p></footer></div>
+<section id="upload-panel" hidden><h2>上传视频</h2><p>此功能尚未实现。本次只提供界面修改。</p></section></section></main>
+<script src="config.js"></script><script src="auth.js"></script><script src="admin.js"></script></body></html>
