@@ -62,67 +62,67 @@
     if (!response.ok) throw new Error(`site.json: HTTP ${response.status}`);
     const site = await response.json();
     renderContent(site);
-      const rail = document.querySelector('.rail');
-      const previous = document.querySelector('#previous');
-      const next = document.querySelector('#next');
-      const dotContainer = document.querySelector('.dots');
-      const dotPrototype = dotContainer.querySelector('.dot').cloneNode(true);
-      dotContainer.replaceChildren(...site.sections.videos.cards.map(() => dotPrototype.cloneNode(true)));
-      const dots = [...dotContainer.children];
-      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-      const behavior = () => reduceMotion.matches ? 'instant' : 'smooth';
-      function updateRail() {
-        const media = rail.querySelector('.media');
-        if (!media) { previous.disabled = next.disabled = true; return; }
-        rail.parentElement.style.setProperty('--media-center', `${media.offsetTop + media.offsetHeight / 2}px`);
-        const max = rail.scrollWidth - rail.clientWidth;
-        previous.disabled = rail.scrollLeft < 2;
-        next.disabled = rail.scrollLeft >= max - 2;
-        const progress = max > 0 ? rail.scrollLeft / max : 0;
-        dots.forEach((dot, index) => dot.classList.toggle('active', index === Math.round(progress * (dots.length - 1))));
-      }
-      function moveRail(direction) {
-        const card = rail.querySelector('.rail-card');
-        if (!card) return;
-        const gap = parseFloat(getComputedStyle(rail).gap) || 24;
-        rail.scrollBy({ left:direction * (card.offsetWidth + gap), behavior:behavior() });
-      }
-      previous.addEventListener('click', () => moveRail(-1));
-      next.addEventListener('click', () => moveRail(1));
-      rail.addEventListener('scroll', updateRail, { passive:true });
-      rail.addEventListener('keydown', event => {
-        if (event.target !== rail || !['ArrowLeft','ArrowRight'].includes(event.key)) return;
-        event.preventDefault(); moveRail(event.key === 'ArrowRight' ? 1 : -1);
-      });
-      new ResizeObserver(updateRail).observe(rail);
-      updateRail();
-      const menuToggle = document.querySelector('.menu-toggle');
-      const navLinks = document.querySelector('.nav-links');
-      function closeMenu() { navLinks.classList.remove('open'); menuToggle.setAttribute('aria-expanded','false'); menuToggle.setAttribute('aria-label',site.header.menu.openLabel); }
-      menuToggle.addEventListener('click', () => {
-        const open = navLinks.classList.toggle('open');
-        menuToggle.setAttribute('aria-expanded',String(open));
-        menuToggle.setAttribute('aria-label',open ? site.header.menu.closeLabel : site.header.menu.openLabel);
-      });
-      navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
-      document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMenu(); });
-      matchMedia('(min-width:769px)').addEventListener('change', event => { if (event.matches) closeMenu(); });
-      const dialog = document.querySelector('#video-dialog');
-      let opener;
-      document.querySelectorAll('[data-video]').forEach(button => button.addEventListener('click', () => {
-        opener = button;
-        const card = get(site, button.dataset.siteCard);
-        document.querySelector('#dialog-title').textContent = card.preview.title;
-        document.querySelector('#preview-label').textContent = card.preview.label;
-        dialog.showModal(); document.body.classList.add('modal-open');
-      }));
-      document.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
-      dialog.addEventListener('click', event => {
-        if (event.target !== dialog) return;
-        const rect = dialog.getBoundingClientRect();
-        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
-      });
-      dialog.addEventListener('close', () => { document.body.classList.remove('modal-open'); if (opener) opener.focus({ preventScroll:true }); });
+    const rail = document.querySelector('.rail');
+    const previous = document.querySelector('#previous');
+    const next = document.querySelector('#next');
+    const dotContainer = document.querySelector('.dots');
+    const dotPrototype = dotContainer.querySelector('.dot').cloneNode(true);
+    dotContainer.replaceChildren(...site.sections.videos.cards.map(() => dotPrototype.cloneNode(true)));
+    const dots = [...dotContainer.children];
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    const behavior = () => reduceMotion.matches ? 'instant' : 'smooth';
+    function updateRail() {
+      const media = rail.querySelector('.media');
+      if (!media) { previous.disabled = next.disabled = true; return; }
+      rail.parentElement.style.setProperty('--media-center', `${media.offsetTop + media.offsetHeight / 2}px`);
+      const max = rail.scrollWidth - rail.clientWidth;
+      previous.disabled = rail.scrollLeft < 2;
+      next.disabled = rail.scrollLeft >= max - 2;
+      const progress = max > 0 ? rail.scrollLeft / max : 0;
+      dots.forEach((dot, index) => dot.classList.toggle('active', index === Math.round(progress * (dots.length - 1))));
+    }
+    function moveRail(direction) {
+      const card = rail.querySelector('.rail-card');
+      if (!card) return;
+      const gap = parseFloat(getComputedStyle(rail).gap) || 24;
+      rail.scrollBy({ left: direction * (card.offsetWidth + gap), behavior: behavior() });
+    }
+    previous.addEventListener('click', () => moveRail(-1));
+    next.addEventListener('click', () => moveRail(1));
+    rail.addEventListener('scroll', updateRail, { passive: true });
+    rail.addEventListener('keydown', event => {
+      if (event.target !== rail || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+      event.preventDefault(); moveRail(event.key === 'ArrowRight' ? 1 : -1);
+    });
+    new ResizeObserver(updateRail).observe(rail);
+    updateRail();
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    function closeMenu() { navLinks.classList.remove('open'); menuToggle.setAttribute('aria-expanded', 'false'); menuToggle.setAttribute('aria-label', site.header.menu.openLabel); }
+    menuToggle.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(open));
+      menuToggle.setAttribute('aria-label', open ? site.header.menu.closeLabel : site.header.menu.openLabel);
+    });
+    navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMenu(); });
+    matchMedia('(min-width:769px)').addEventListener('change', event => { if (event.matches) closeMenu(); });
+    const dialog = document.querySelector('#video-dialog');
+    let opener;
+    document.querySelectorAll('[data-video]').forEach(button => button.addEventListener('click', () => {
+      opener = button;
+      const card = get(site, button.dataset.siteCard);
+      document.querySelector('#dialog-title').textContent = card.preview.title;
+      document.querySelector('#preview-label').textContent = card.preview.label;
+      dialog.showModal(); document.body.classList.add('modal-open');
+    }));
+    document.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', event => {
+      if (event.target !== dialog) return;
+      const rect = dialog.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
+    });
+    dialog.addEventListener('close', () => { document.body.classList.remove('modal-open'); if (opener) opener.focus({ preventScroll: true }); });
     document.documentElement.dataset.siteReady = 'true';
   }
   initialize().catch(error => {
