@@ -33,7 +33,9 @@ jobs:
       - name: Check JavaScript syntax
         run: npm run check
       - name: Validate content
-        run: python3 test_content.py
+        run: |
+          python3 -m pip install beautifulsoup4
+          python3 test_content.py
       - name: Build static artifact
         run: npm run build
       - name: Verify Worker bundle
