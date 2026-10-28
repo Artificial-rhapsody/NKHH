@@ -4,13 +4,17 @@
   "type": "module",
   "scripts": {
     "dev": "node dev-server.js",
-    "worker:dev": "wrangler dev --config workers/wrangler.jsonc --port 8787",
+    "build": "node build-static.js",
+    "worker:dev": "wrangler dev --config workers/wrangler.jsonc --local --ip 127.0.0.1 --port 8787",
+    "worker:deploy": "wrangler deploy --config workers/wrangler.jsonc --env production",
     "db:init": "wrangler d1 migrations apply story-users --local --config workers/wrangler.jsonc",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote --env production --config workers/wrangler.jsonc",
     "admin:promote": "node workers/promote-admin.js",
     "test": "node --test tests/*.test.js",
     "test:e2e": "node tests/browser-e2e.js",
-    "check": "node --check script.js && node --check auth.js && node --check admin.js && node --check workers/src/index.js",
-    "build:worker": "wrangler deploy --dry-run --config workers/wrangler.jsonc"
+    "test:videos": "node tests/video-admin-e2e.js",
+    "check": "node --check script.js && node --check auth.js && node --check admin.js && node --check video-admin.js && node --check video.js && node --check video-validation.js && node --check dev-server.js && node --check workers/src/index.js && node --check workers/src/github-content.js && node --check workers/src/site-validation.js && node --check workers/src/video-validation.js && node --check media-upload.js && node --check upload-storage.js && node --check build-static.js && node --check editor-preview.js && node --check content-validation.js",
+    "build:worker": "wrangler deploy --dry-run --config workers/wrangler.jsonc --env production"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "latest",

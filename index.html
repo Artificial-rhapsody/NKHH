@@ -106,149 +106,36 @@
                 </div>
             </div>
         </section>
-        <!-- 02 / 主次双列 + 描边横排卡片 -->
         <section aria-labelledby="layouts-title" class="layout-section" id="layouts">
-            <div aria-hidden="true" class="layout-backdrop"><img data-site-image="sections.layouts.backgroundImage"
-                    data-site-image-fallback="sections.layouts.mainCard.image" decoding="async" height="675"
-                    id="layout-background-photo" referrerpolicy="no-referrer" width="900" /></div>
+            <div aria-hidden="true" class="layout-backdrop"><img id="moment-background" alt="" /></div>
             <div class="wrap">
                 <p class="eyebrow" data-site-text="sections.layouts.eyebrow"></p>
                 <h2 data-site-text="sections.layouts.title" id="layouts-title"></h2>
-                <div class="feature-grid">
-                    <article><button class="media feature-media"
-                            data-site-attrs='{"aria-label": "sections.layouts.mainCard.openLabel", "data-video": "sections.layouts.mainCard.videoId"}'
-                            data-site-card="sections.layouts.mainCard"><img class="sample-photo"
-                                data-site-image="sections.layouts.mainCard.image" decoding="async" height="675"
-                                referrerpolicy="no-referrer" width="900" /><span class="media-num"
-                                data-site-text="sections.layouts.mainCard.number"></span><span class="image-label"
-                                data-site-text="sections.layouts.mainCard.image.placeholder"
-                                data-site-text-position="after"><svg aria-hidden="true">
-                                    <use href="#image"></use>
-                                </svg></span><span class="play"><svg aria-hidden="true">
-                                    <use href="#play"></use>
-                                </svg></span><span class="duration"
-                                data-site-text="sections.layouts.mainCard.duration"></span></button>
-                        <div class="feature-caption">
-                            <h3 data-site-text="sections.layouts.mainCard.title"></h3><span
-                                data-site-text="sections.layouts.mainCard.caption"></span>
-                        </div>
-                    </article>
+                <p id="moments-empty" class="video-empty">No videos yet.</p>
+                <div id="moments-content" class="feature-grid" hidden>
+                    <article><a id="moment-cover-link" class="media feature-media"><img id="moment-cover" class="sample-photo" alt="" /><span class="play" aria-hidden="true">▶</span></a></article>
                     <div class="feature-copy">
-                        <p class="eyebrow" data-site-text="sections.layouts.copy.eyebrow"></p>
-                        <h3 data-site-lines="sections.layouts.copy.title"></h3>
-                        <p data-site-text="sections.layouts.copy.description"></p><button class="pill pill-light"
-                            data-site-attrs='{"data-video": "sections.layouts.mainCard.videoId"}'
-                            data-site-card="sections.layouts.mainCard"
-                            data-site-text="sections.layouts.copy.action.label"><svg aria-hidden="true">
-                                <use href="#arrow"></use>
-                            </svg></button>
-                        <article class="compact-card"><button class="media compact-media"
-                                data-site-attrs='{"aria-label": "sections.layouts.sideCard.openLabel", "data-video": "sections.layouts.sideCard.videoId"}'
-                                data-site-card="sections.layouts.sideCard"><img class="sample-photo"
-                                    data-site-image="sections.layouts.sideCard.image" decoding="async" height="675"
-                                    referrerpolicy="no-referrer" width="900" /><span class="image-label"
-                                    data-site-text="sections.layouts.sideCard.image.placeholder"
-                                    data-site-text-position="after"><svg aria-hidden="true">
-                                        <use href="#image"></use>
-                                    </svg></span><span class="play"><svg aria-hidden="true">
-                                        <use href="#play"></use>
-                                    </svg></span></button>
-                            <div class="compact-copy">
-                                <p class="eyebrow" data-site-text="sections.layouts.sideCard.eyebrow"></p>
-                                <h3 data-site-text="sections.layouts.sideCard.title"></h3>
-                                <p data-site-text="sections.layouts.sideCard.description"></p>
-                            </div>
-                        </article>
+                        <p class="eyebrow">ORAL HISTORY ARCHIVE</p><h3 id="moment-title"></h3>
+                        <ul id="moment-tags" class="video-tags" aria-label="Video tags"></ul>
+                        <a id="moment-link" class="pill pill-light">Take a look →</a>
+                        <button id="moment-next" class="compact-card" type="button"><span class="media compact-media"><img id="moment-next-cover" class="sample-photo" alt="" /></span><span class="compact-copy"><span class="eyebrow">NEXT VIDEO →</span><strong id="moment-next-title"></strong></span></button>
+                        <div class="moment-controls"><span id="moment-position" aria-live="off"></span><button id="moment-pause" type="button" aria-pressed="false">Pause rotation</button></div>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- 03 / 三张开放式卡片；原生横向滚动 -->
-        <section aria-labelledby="videos-title" class="rail-section" id="videos">
-            <div class="wrap">
-                <div class="section-head">
-                    <div>
-                        <p class="eyebrow" data-site-text="sections.videos.eyebrow"></p>
-                        <h2 data-site-text="sections.videos.title" id="videos-title"></h2>
-                    </div>
-                </div>
-                <div class="rail-stage">
-                    <button aria-controls="video-rail" class="rail-arrow"
-                        data-site-attrs='{"aria-label": "sections.videos.controls.previousLabel"}' disabled=""
-                        id="previous"><svg aria-hidden="true" style="transform:rotate(180deg)">
-                            <use href="#chevron"></use>
-                        </svg></button>
-                    <button aria-controls="video-rail" class="rail-arrow"
-                        data-site-attrs='{"aria-label": "sections.videos.controls.nextLabel"}' id="next"><svg
-                            aria-hidden="true">
-                            <use href="#chevron"></use>
-                        </svg></button>
-                    <div class="rail" data-site-attrs='{"aria-label": "sections.videos.controls.listLabel"}'
-                        id="video-rail" tabindex="0">
-
-
-
-                        <template data-site-each="sections.videos.cards">
-                            <article class="rail-card">
-                                <button class="media"
-                                    data-site-attrs='{"aria-label": "sections.videos.cards.0.openLabel", "data-video": "sections.videos.cards.0.videoId"}'
-                                    data-site-card="sections.videos.cards.0"><img class="sample-photo"
-                                        data-site-image="sections.videos.cards.0.image" decoding="async" height="560"
-                                        referrerpolicy="no-referrer" width="900" /><span class="media-num"
-                                        data-site-text="sections.videos.cards.0.number"></span><span class="image-label"
-                                        data-site-text="sections.videos.cards.0.image.placeholder"
-                                        data-site-text-position="after"><svg aria-hidden="true">
-                                            <use href="#image"></use>
-                                        </svg></span><span class="play"><svg aria-hidden="true">
-                                            <use href="#play"></use>
-                                        </svg></span><span class="duration"
-                                        data-site-text="sections.videos.cards.0.duration"></span></button>
-                                <div class="card-meta">
-                                    <h3 data-site-text="sections.videos.cards.0.title"></h3><span
-                                        data-site-text="sections.videos.cards.0.caption"></span>
-                                </div>
-                                <p data-site-text="sections.videos.cards.0.description"></p>
-                            </article>
-                        </template>
-                    </div>
-                </div>
-                <div class="rail-footer">
-                    <div aria-hidden="true" class="dots"><span class="dot active"></span><span class="dot"></span><span
-                            class="dot"></span></div>
-                </div>
-            </div>
-        </section>
+        <section aria-labelledby="videos-title" class="rail-section" id="videos"><div class="wrap">
+            <div class="section-head"><div><p class="eyebrow" data-site-text="sections.videos.eyebrow"></p><h2 data-site-text="sections.videos.title" id="videos-title"></h2></div></div>
+            <p id="videos-empty" class="video-empty">No videos yet.</p>
+            <div id="archive-stage" class="rail-stage" hidden><button id="previous" class="rail-arrow" type="button" aria-label="Previous videos">‹</button><button id="next" class="rail-arrow" type="button" aria-label="Next videos">›</button><div class="rail" id="video-rail" tabindex="0" aria-label="Video archive"></div></div>
+        </div></section>
         <!-- 04 / 致谢文字页 -->
         <section aria-labelledby="thanks-title" class="thanks" id="thanks">
             <div class="wrap">
                 <p class="eyebrow" data-site-text="sections.thanks.eyebrow"></p>
                 <h2 data-site-text="sections.thanks.title" id="thanks-title"></h2>
-                <ul class="credits" data-site-attrs='{"aria-label": "sections.thanks.ariaLabel"}'>
-                    <li data-site-text="sections.thanks.names.0"
-                        style="--x:10%;--y:12%;--size:16px;--tone:0.78;--mx:21%;--my:7%;--msize:13px"></li>
-                    <li data-site-text="sections.thanks.names.1"
-                        style="--x:47%;--y:8%;--size:20px;--tone:0.85;--mx:73%;--my:12%;--msize:15px"></li>
-                    <li data-site-text="sections.thanks.names.2"
-                        style="--x:84%;--y:15%;--size:15px;--tone:0.68;--mx:28%;--my:24%;--msize:14px"></li>
-                    <li data-site-text="sections.thanks.names.3"
-                        style="--x:28%;--y:34%;--size:22px;--tone:0.92;--mx:77%;--my:29%;--msize:13px"></li>
-                    <li data-site-text="sections.thanks.names.4"
-                        style="--x:68%;--y:30%;--size:18px;--tone:0.82;--mx:20%;--my:40%;--msize:15px"></li>
-                    <li data-site-text="sections.thanks.names.5"
-                        style="--x:10%;--y:54%;--size:19px;--tone:0.86;--mx:72%;--my:44%;--msize:14px"></li>
-                    <li data-site-text="sections.thanks.names.6"
-                        style="--x:48%;--y:54%;--size:21px;--tone:0.9;--mx:29%;--my:56%;--msize:16px"></li>
-                    <li data-site-text="sections.thanks.names.7"
-                        style="--x:88%;--y:50%;--size:17px;--tone:0.72;--mx:80%;--my:59%;--msize:12px"></li>
-                    <li data-site-text="sections.thanks.names.8"
-                        style="--x:69%;--y:75%;--size:20px;--tone:0.88;--mx:20%;--my:73%;--msize:14px"></li>
-                    <li data-site-text="sections.thanks.names.9"
-                        style="--x:20%;--y:87%;--size:17px;--tone:0.75;--mx:72%;--my:77%;--msize:15px"></li>
-                    <li data-site-text="sections.thanks.names.10"
-                        style="--x:48%;--y:92%;--size:14px;--tone:0.7;--mx:28%;--my:89%;--msize:12px"></li>
-                    <li data-site-text="sections.thanks.names.11"
-                        style="--x:87%;--y:87%;--size:19px;--tone:0.83;--mx:78%;--my:94%;--msize:14px"></li>
-                </ul><a class="pill pill-light" data-site-attrs='{"href": "sections.thanks.action.href"}'
+                <p class="thanks-copy" data-site-text="sections.thanks.description"></p>
+                <a class="pill pill-light" data-site-attrs='{"href": "sections.thanks.action.href"}'
                     data-site-text="sections.thanks.action.label"><svg aria-hidden="true"
                         style="transform:rotate(-90deg)">
                         <use href="#arrow"></use>
@@ -263,24 +150,10 @@
                 data-site-text="footer.topLabel"></a>
         </div>
     </footer>
-    <dialog aria-describedby="dialog-description" aria-labelledby="dialog-title" id="video-dialog">
-        <div class="dialog-head">
-            <h3 data-site-text="videoDialog.initialTitle" id="dialog-title"></h3><button autofocus=""
-                class="icon-button dialog-close" data-site-attrs='{"aria-label": "videoDialog.closeLabel"}'><svg
-                    aria-hidden="true">
-                    <use href="#close"></use>
-                </svg></button>
-        </div>
-        <div class="video-placeholder"><svg aria-hidden="true">
-                <use href="#play"></use>
-            </svg>
-            <p data-site-text="videoDialog.initialLabel" id="preview-label"></p><span
-                data-site-text="videoDialog.placeholder"></span>
-        </div>
-        <p class="dialog-foot" data-site-text="videoDialog.description" id="dialog-description"></p>
-    </dialog>
+    <script src="response-utils.js"></script>
     <script src="script.js"></script>
     <script src="config.js"></script>
+    <script src="content-policy.js"></script>
     <script src="auth.js"></script>
     <script src="editor-preview.js"></script>
 </body>

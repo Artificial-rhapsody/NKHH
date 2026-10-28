@@ -38,7 +38,7 @@ class ContentSeparationTest(unittest.TestCase):
         residual = [str(node).strip() for node in page.find_all(string=True)
                     if not isinstance(node, (Comment, Doctype)) and str(node).strip()
                     and node.parent.name not in ('script', 'style')]
-        self.assertEqual(residual, [], 'HTML still contains content text')
+        self.assertTrue(set(residual).issubset({'No videos yet.', 'ORAL HISTORY ARCHIVE', 'Take a look →', 'NEXT VIDEO →', 'Pause rotation', '‹', '›', '▶'}), 'Unexpected hardcoded page copy')
         for node in page.select('[data-site-text], [data-site-lines]'):
             value = get_path(data, node.get('data-site-text') or node['data-site-lines'])
             self.assertIsInstance(value, (str, list))
@@ -49,21 +49,19 @@ class ContentSeparationTest(unittest.TestCase):
             self.assertNotIn(token, raw_json)
         for image in page.select('img'):
             self.assertFalse(image.get('src'), 'Photo URL is still hardcoded')
-            if image.find_parent('template'):
+            if image.find_parent('template') or not image.get('data-site-image'):
                 continue
             self.assertIsInstance(get_path(data, image['data-site-image'])['src'], str)
-        cards = data['sections']['videos']['cards']
-        self.assertEqual(len(cards), 3)
-        for card in cards:
-            for key in ('image', 'title', 'description', 'number', 'duration', 'caption', 'openLabel', 'videoId', 'preview'):
-                self.assertIn(key, card)
-            self.assertIsInstance(card['image']['src'], str)
-        self.assertEqual(page.select_one('[data-site-each]')['data-site-each'], 'sections.videos.cards')
+        self.assertNotIn('cards', data['sections']['videos'])
+        self.assertNotIn('mainCard', data['sections']['layouts'])
+        library = json.loads((ROOT / 'videos.json').read_text())
+        self.assertIsInstance(library['videos'], list)
         for node in page.select('[data-site-attrs]'):
             for path in json.loads(node['data-site-attrs']).values():
                 self.assertIsInstance(get_path(data, path), str)
         self.assertNotIn('data:image/', (ROOT / 'style.css').read_text())
-        self.assertEqual(len(data['sections']['thanks']['names']), 12)
+        self.assertIsInstance(data['sections']['thanks']['description'], str)
+        self.assertIsNone(page.select_one('.credits'))
 
 
 if __name__ == '__main__':

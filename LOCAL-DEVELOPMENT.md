@@ -50,13 +50,13 @@ npm run admin:promote -- your@email.example
 - 底部总确认才覆盖当前目录 site.json；服务验证实时 admin 身份、来源、内容结构和版本号，原子写入并回读。
 - 上传视频只有入口与尚未实现说明。
 - 图片本次填写现有本地资源路径或 HTTPS URL，不提供图片／视频上传。
-- 本地发布后的内容属于工作区变更，线上 GitHub Pages 不会自动更新。
+- 本地发布后的内容属于工作区变更。线上发布使用生产 Worker：管理员修改通过 GitHub Contents API 原子写回甲方仓库的 `site.json` 或 `videos.json`，然后由 GitHub Actions 构建并部署 Pages。仓库和分支通过生产环境变量配置，GitHub token 只存为 Cloudflare Worker Secret，不进入仓库。
 
 ## 安全与数据
 
 D1 users 存 id、username、email、role、password_hash、salt、created_at；密码以 scrypt 哈希存储，API 不返回密码或哈希。会话随机生成，数据库只存令牌 SHA-256，24 小时过期，退出即撤销。为支持 GitHub Pages 与 Worker 跨域，会话放在当前标签页 sessionStorage，不使用跨站 Cookie；关闭标签页不保留登录。管理员鉴权每次读取数据库角色。
 
-config.js 的 apiBase 在本地走同源代理，未来部署必须配置实际 Worker HTTPS 地址，同时将 Pages 精确 Origin 加入 Worker ALLOWED_ORIGINS。publishBase 的线上功能尚未接入，不要填入假地址。
+config.js 的 apiBase 在本地走同源代理，生产 Pages 构建由 `PUBLIC_API_BASE` 注入实际 Worker HTTPS 地址；同时将 Pages 精确 Origin 加入 Worker `ALLOWED_ORIGINS`。线上管理员内容和媒体发布走 Worker 的 GitHub Contents API。
 
 本地数据库位于 workers/.wrangler/，已忽略入 Git。Workers database_id 当前为本地占位 ID，部署前必须创建真实 D1 并配置，不能直接部署当前配置。
 

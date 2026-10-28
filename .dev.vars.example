@@ -1,0 +1,3 @@
+# Local-only Worker variables. Do not put production secrets here.
+# The current Worker does not require any secret for local authentication.
+# Keep this file as a template only; use workers/.dev.vars for local values.
